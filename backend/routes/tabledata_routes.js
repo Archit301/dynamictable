@@ -3,7 +3,7 @@ import TableData from '../models/tabledata_models.js';
 
 const router = express.Router();
 
-// Initialize table
+
 router.post('/initialize', async (req, res) => {
   const { columns } = req.body;
   try {
@@ -16,7 +16,7 @@ router.post('/initialize', async (req, res) => {
   }
 });
 
-// Get table data
+
 router.get('/tables', async (req, res) => {
   try {
     const table = await TableData.findOne();
@@ -27,7 +27,7 @@ router.get('/tables', async (req, res) => {
   }
 });
 
-// Add row to table
+
 router.post('/row', async (req, res) => {
     const { row } = req.body;
     try {
@@ -43,7 +43,6 @@ router.post('/row', async (req, res) => {
     }
   });
 
-// Update row by ID
 router.put('/row/:rowId', async (req, res) => {
   const { rowId } = req.params;
   const { updatedRow } = req.body;
@@ -65,7 +64,7 @@ router.put('/row/:rowId', async (req, res) => {
   }
 });
 
-// Delete row by ID
+
 router.delete('/row/:rowId', async (req, res) => {
   const { rowId } = req.params;
 

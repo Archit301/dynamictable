@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 
 const columnSchema = new mongoose.Schema({
-    name: String, // Name of the column
-    type: String  // Type of the column (String, Number, etc.)
+    name: String, 
+    type: String  
   });
   
-  // Define the schema for rows with dynamic keys and values
+ 
   const rowSchema = new mongoose.Schema({
-    data: { type: Map, of: mongoose.Schema.Types.Mixed }  // Store row data as a map of key-value pairs
+    data: { type: Map, of: mongoose.Schema.Types.Mixed }  
   });
   
   const tableDataSchema = new mongoose.Schema({

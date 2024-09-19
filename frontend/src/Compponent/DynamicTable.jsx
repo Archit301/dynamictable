@@ -6,7 +6,6 @@ function DynamicTable() {
   const [newColumn, setNewColumn] = useState({ name: "", type: "string" });
   const [filterQuery, setFilterQuery] = useState("");
 
-  // Fetch table data from backend on component mount
   useEffect(() => {
     fetch("http://localhost:2040/backend/table/tables")
       .then((response) => {
@@ -22,24 +21,23 @@ function DynamicTable() {
       .catch((error) => console.error("Error fetching table data:", error));
   }, []);
 
-  // Add a new column
+
   const addColumn = () => {
     if (newColumn.name.trim() === "") return;
     setColumns([...columns, newColumn]);
     setNewColumn({ name: "", type: "string" });
   };
 
-  // Add a new row
+ 
   const addRow = () => {
     const emptyRow = columns.reduce((acc, col) => {
       acc[col.name] = col.type === "number" ? 0 : "";
       return acc;
     }, {});
 
-    // Immediately update UI with the new empty row
+
     setRows((prevRows) => [...prevRows, emptyRow]);
 
-    // Then sync with backend
     fetch("http://localhost:2040/backend/table/row", {
       method: "POST",
       headers: {
@@ -54,13 +52,16 @@ function DynamicTable() {
         return response.json();
       })
       .then((data) => {
-        console.log("New rows from backend:", data.rows);
-        setRows(data.rows || []); // Sync with backend data
+        if (data.rows) {
+          console.log("New rows from backend:", data.rows);
+          setRows(data.rows);
+        } else {
+          console.log("Backend returned no rows, using frontend data.");
+        }
       })
       .catch((error) => console.error("Error adding row:", error));
   };
 
-  // Update cell value
   const updateCell = (rowIndex, columnName, value) => {
     const updatedRows = [...rows];
     updatedRows[rowIndex][columnName] = value;
@@ -81,12 +82,16 @@ function DynamicTable() {
         return response.json();
       })
       .then((data) => {
-        setRows(data.rows || []);
+        if (data.rows) {
+          setRows(data.rows || []);
+        } else {
+          console.log("Update success, but no rows returned.");
+        }
       })
       .catch((error) => console.error("Error updating row:", error));
   };
 
-  // Filter rows based on query
+
   const handleFilter = () => {
     const filteredRows = rows.filter((row) => {
       return Object.values(row).some((value) =>
@@ -96,7 +101,7 @@ function DynamicTable() {
     setRows(filteredRows);
   };
 
-  // Sort rows based on column
+
   const handleSort = (colName) => {
     const sortedRows = [...rows].sort((a, b) => {
       if (typeof a[colName] === "number" && typeof b[colName] === "number") {
@@ -111,7 +116,7 @@ function DynamicTable() {
     <div className="p-4">
       <h2 className="text-lg font-bold mb-4">Dynamic Table</h2>
 
-      {/* Add New Column */}
+      
       <div className="flex items-center mb-4">
         <input
           type="text"
@@ -133,7 +138,6 @@ function DynamicTable() {
         </button>
       </div>
 
-      {/* Filter Input */}
       <div className="flex items-center mb-4">
         <input
           type="text"
@@ -147,7 +151,7 @@ function DynamicTable() {
         </button>
       </div>
 
-      {/* Table */}
+   
       <table className="min-w-full table-auto border">
         <thead>
           <tr>
@@ -180,7 +184,7 @@ function DynamicTable() {
         </tbody>
       </table>
 
-      {/* Add New Row */}
+     
       <button onClick={addRow} className="mt-4 bg-green-500 text-white px-4 py-2">
         Add Row
       </button>
